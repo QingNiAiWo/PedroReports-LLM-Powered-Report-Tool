@@ -1,0 +1,19 @@
+{
+    "question": "Analyze the relationship between Glucose levels and Insulin, and their combined impact on diabetes outcome.",
+    "glucose_stats": {
+        "mean": 123.9232,
+        "median": 121.0,
+        "mode": 100
+    },
+    "insulin_stats": {
+        "mean": 108.6021,
+        "median": 83.0,
+        "mode": 0
+    },
+    "outcome_stats": {
+        "mean": 0.3787,
+        "median": 0.0,
+        "mode": 0
+    },
+    "additional_metrics": {}
+}
