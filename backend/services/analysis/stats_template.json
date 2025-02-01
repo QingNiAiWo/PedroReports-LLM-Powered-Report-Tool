@@ -1,0 +1,46 @@
+{
+    "template": {
+      "question": "Analysis question here",
+      "analysis": {
+        "basic_statistics": {
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "sample_size": 0
+        },
+        "distribution_analysis": {
+          "skewness": 0.0,
+          "kurtosis": 0.0,
+          "normality_test": {
+            "statistic": 0.0,
+            "p_value": 0.0,
+            "test_name": "shapiro"
+          }
+        },
+        "correlation_analysis": {
+          "correlations": [
+            {
+              "variables": ["var1", "var2"],
+              "coefficient": 0.0,
+              "p_value": 0.0,
+              "method": "pearson"
+            }
+          ]
+        },
+        "group_analysis": {
+          "group_statistics": [
+            {
+              "group": "group1",
+              "count": 0,
+              "mean": 0.0,
+              "std": 0.0
+            }
+          ]
+        },
+        "additional_metrics": {}
+      }
+    }
+  }
+  

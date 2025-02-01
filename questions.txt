@@ -1,0 +1,7 @@
+Question 1: What is the distribution of BMI across different age groups, and how does it correlate with diabetes outcomes?
+Question 2: Analyze the relationship between Glucose levels and Insulin, and their combined impact on diabetes outcome.
+Question 3: How does DiabetesPedigreeFunction (genetic influence) vary across age groups, and is there a significant correlation with diabetes outcomes?
+Question 4: What is the correlation between Blood Pressure and BMI, and how do these factors influence diabetes risk?
+Question 5: Compare the distribution of pregnancies across different age groups and analyze its relationship with diabetes outcomes.
+
+explain distribution of age
