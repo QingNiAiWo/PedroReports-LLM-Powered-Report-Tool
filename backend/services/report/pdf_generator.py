@@ -2,6 +2,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Optional
 from reportlab.lib import colors
+import re
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import inch
 from reportlab.platypus import (
@@ -24,35 +25,34 @@ logger = get_logger(__name__)
 
 @dataclass
 class TOCEntry:
-    """Table of Contents entry"""
+    """Table of Contents entry with proper page tracking"""
     title: str
     level: int
     page_number: Optional[int] = None
     parent_id: Optional[str] = None
 
 class DynamicTOC:
-    """Dynamic Table of Contents handler"""
+    """Dynamic Table of Contents handler with improved page tracking"""
     def __init__(self):
-        self.entries: List[TOCEntry] = []
-        self._current_page: int = 1
-        self._last_section_id: Optional[str] = None
-
-    @property
-    def current_page(self) -> int:
-        """Get current page number"""
-        return self._current_page
+        self.entries = []
+        self._current_page = 1
+        self._last_section_id = None
+        self._toc_pages = 0  # Track TOC pages for offset
 
     def add_entry(self, title: str, level: int) -> None:
-        """Add a new entry to the TOC"""
+        """Add a new entry to the TOC with proper page number"""
+        # Clean the title of any special characters and formatting
+        clean_title = re.sub(r'[^\w\s-]', '', title)
+        
         entry = TOCEntry(
             title=title,
             level=level,
-            page_number=self._current_page,
+            page_number=self._current_page + self._toc_pages,
             parent_id=self._last_section_id if level > 1 else None
         )
         
         if level == 1:
-            self._last_section_id = title
+            self._last_section_id = clean_title
             
         self.entries.append(entry)
 
@@ -60,26 +60,57 @@ class DynamicTOC:
         """Increment the current page count"""
         self._current_page += count
 
-    def get_entries(self) -> List[TOCEntry]:
-        """Get all TOC entries"""
-        return self.entries
-
-    def get_section_entries(self, section_id: str) -> List[TOCEntry]:
-        """Get all entries for a specific section"""
-        return [
-            entry for entry in self.entries 
-            if entry.parent_id == section_id
-        ]
-
-    def reset_page_count(self) -> None:
-        """Reset the page counter"""
-        self._current_page = 1
-
-    def update_page_numbers(self, offset: int) -> None:
-        """Update all page numbers by an offset"""
+    def set_toc_pages(self, pages: int) -> None:
+        """Set the number of pages taken by TOC for offset calculation"""
+        self._toc_pages = pages
+        # Update all existing entries to account for TOC pages
         for entry in self.entries:
             if entry.page_number is not None:
-                entry.page_number += offset
+                entry.page_number += self._toc_pages
+
+    def create_toc_content(self, styles) -> List:
+        """Create table of contents with proper spacing and formatting"""
+        elements = []
+        
+        # Add TOC title
+        elements.append(Paragraph("Table of Contents", styles['CustomChapterTitle']))
+        elements.append(Spacer(1, 0.2*inch))
+        
+        for entry in self.entries:
+            # Skip the TOC entry itself
+            if entry.title == "Table of Contents":
+                continue
+                
+            # Calculate indentation based on level
+            indent = "  " * (entry.level - 1)
+            title = f"{indent}{entry.title}"
+            
+            # Calculate dots with proper spacing
+            title_length = len(title)
+            dots_count = max(3, 70 - title_length)  # Ensure minimum 3 dots
+            dots = "." * dots_count
+            
+            # Create TOC line with proper spacing and page number
+            if entry.level == 1:
+                toc_line = f"{title}{dots}{entry.page_number}"
+                style = styles['CustomTOCEntry']
+            elif entry.level == 2:
+                toc_line = f"{title}{dots}{entry.page_number}"
+                style = styles['CustomTOCEntry2']
+            else:
+                toc_line = f"{title}{dots}{entry.page_number}"
+                style = styles['CustomTOCEntry3']
+            
+            elements.append(Paragraph(toc_line, style))
+        
+        elements.append(PageBreak())
+        return elements
+
+    def reset(self) -> None:
+        """Reset the TOC for reprocessing"""
+        self._current_page = 1
+        self._toc_pages = 0
+        self.entries = []
 
 
 class PDFGenerator:
@@ -101,8 +132,9 @@ class PDFGenerator:
             return False    
     
     def create_header_footer(self, canvas, doc):
-        """Create header and footer on each page"""
+        """Create header and footer on each page and update TOC page numbers"""
         canvas.saveState()
+        
         # Header
         header_text = self.report_title
         canvas.setFont('Helvetica', 9)
@@ -115,13 +147,21 @@ class PDFGenerator:
                    A4[0] - PDF_CONSTANTS['MARGIN'], 
                    A4[1] - 45)
         
-        # Footer
+        # Footer with page number
         footer_text = f"Page {doc.page}"
         canvas.drawString(A4[0]/2 - 20, 30, footer_text)
         canvas.line(PDF_CONSTANTS['MARGIN'], 
                    50, 
                    A4[0] - PDF_CONSTANTS['MARGIN'], 
                    50)
+                   
+        # Update TOC entries with actual page numbers
+        if hasattr(self, 'toc') and hasattr(self, '_processing_section'):
+            current_section = self._processing_section
+            for entry in self.toc.entries:
+                if entry.title == current_section:
+                    entry.page_number = doc.page
+                    
         canvas.restoreState()
 
     def create_cover_page(self) -> List:
@@ -438,7 +478,7 @@ class PDFGenerator:
 
     @log_execution
     def generate_pdf(self, report_title: str = "Data Analysis Report") -> str:
-        """Generate the complete PDF report with reliable image handling"""
+        """Generate the complete PDF report with correct TOC"""
         try:
             self.report_title = report_title
             self.toc = DynamicTOC()
@@ -457,20 +497,36 @@ class PDFGenerator:
                 bottomMargin=PDF_CONSTANTS['MARGIN']
             )
             
+            # First pass: Generate content and collect TOC entries
+            content = []
+            content.extend(self.create_cover_page())  # Page 1
+            
             # Load and validate data
             analysis_data = self._load_analysis_data()
             if not analysis_data:
                 raise PDFGenerationError("No valid analysis data found")
             
-            # Create sections
-            content = []
-            content.extend(self.create_cover_page())
-            content.extend(self.create_table_of_contents())
+            # Create placeholders for TOC
+            toc_start = len(content)
+            content.extend([PageBreak()])  # TOC placeholder
+            
+            # Add remaining content
             content.extend(self.create_executive_summary(analysis_data))
             content.extend(self.create_analysis_chapters(analysis_data))
             content.extend(self.create_conclusions(analysis_data))
             
-            # Build PDF with error handling
+            # Calculate TOC pages (approximate)
+            toc_entries = len(self.toc.entries)
+            estimated_toc_pages = (toc_entries * 20 + 100) // 700 + 1  # Rough estimate
+            self.toc.set_toc_pages(estimated_toc_pages)
+            
+            # Create actual TOC
+            toc_content = self.toc.create_toc_content(self.styles)
+            
+            # Insert TOC at placeholder position
+            content[toc_start:toc_start+1] = toc_content
+            
+            # Build PDF
             try:
                 doc.build(
                     content,
