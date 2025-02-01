@@ -1,17 +1,16 @@
-# 🌊 InsightFlow
-
-> Unlock the power of your data with AI-driven analysis and elegant report generation 🚀
+# 🦝 PedroReports
+> Your Pawsome Reporter 🐾
 
 [![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](LICENSE)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688.svg)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-Latest-61dafb.svg)](https://reactjs.org)
 [![Vite](https://img.shields.io/badge/Vite-Latest-646cff.svg)](https://vitejs.dev)
 
-## 🎯 What is InsightFlow?
+## What is PedroReports?
 
-InsightFlow is an intelligent data analysis platform that seamlessly combines the power of Google's Gemini AI with intuitive report generation. It transforms your CSV datasets into comprehensive, professional PDF reports with minimal effort. Whether you're analyzing financial trends, healthcare metrics, marketing data, or any other tabular dataset, InsightFlow adapts to your needs.
+PedroReports is your clever companion for data analysis, transforming raw datasets into polished insights through the power of Google's Gemini AI. With a curious eye and quick thinking, it turns your CSV datasets into comprehensive, professional PDF reports with minimal effort. Whether you're analyzing financial trends, healthcare metrics, marketing data, or any other tabular dataset, PedroReports is ready to dig through your data and uncover hidden treasures.
 
-Simply upload your data, ask your questions naturally, and let InsightFlow:
+Simply upload your data, ask your questions naturally, and let PedroReports:
 
 - 🤖 Process your data using advanced AI analysis
 - 📊 Create beautiful, informative visualizations
@@ -19,9 +18,9 @@ Simply upload your data, ask your questions naturally, and let InsightFlow:
 - 📑 Generate polished PDF reports automatically
 - 💡 Deliver AI-powered insights and recommendations
 
-### 🎯 Industry Applications
+### Industry Applications
 
-InsightFlow excels across various domains:
+PedroReports excels across various domains:
 
 - 📈 **Finance**: Analyze market trends, investment portfolios, and financial statements
 - 🏥 **Healthcare**: Process patient data, treatment outcomes, and clinical trials
@@ -30,7 +29,7 @@ InsightFlow excels across various domains:
 - 🔬 **Research**: Analyze experimental data and survey responses
 - 📦 **Supply Chain**: Monitor inventory levels and logistics metrics
 
-## 🌟 Features
+## Features
 
 - 📊 Automated data analysis and visualization
 - 📝 AI-powered insights generation using Google's Gemini model
@@ -41,7 +40,7 @@ InsightFlow excels across various domains:
 - 📄 Professional PDF report generation
 - 🚀 Real-time processing status updates
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - ⚛️ React with Vite for blazing-fast development
@@ -58,7 +57,7 @@ InsightFlow excels across various domains:
 - 📈 Matplotlib & Seaborn for visualization
 - 📑 ReportLab for PDF generation
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 16+ 📦
@@ -70,8 +69,8 @@ InsightFlow excels across various domains:
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/bobinsingh/InsightFlow-AI-Analytics.git
-cd insightflow
+git clone https://github.com/bobinsingh/PedroReports.git
+cd pedroreports
 ```
 
 2. **Backend Setup**
@@ -83,7 +82,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Rename the .env.example file in backend to .env and add your API
+# Rename .env.example to .env and add your API key
 ```
 
 3. **Frontend Setup**
@@ -108,7 +107,7 @@ npm run dev
 
 Visit `http://localhost:5173` to access the application 🌐
 
-## 🎯 Features in Detail
+## Features in Detail
 
 ### Data Analysis
 - 📊 Automated statistical analysis
@@ -131,14 +130,14 @@ Visit `http://localhost:5173` to access the application 🌐
 - 📑 Executive summaries
 - 🔍 Detailed analysis sections
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 project/
 ├── backend/           # FastAPI backend
 │   ├── api/          # API endpoints
 │   ├── core/         # Core functionality
-│   ├── services/     # Key Components for Analysis
+│   ├── services/     # Key Components
 │   └── domain/       # Domain models
 │
 └── frontend/         # React frontend
@@ -149,7 +148,7 @@ project/
     └── public/          # Static assets
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -157,11 +156,11 @@ project/
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+## License
 
 This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - FastAPI for the amazing backend framework
 - React team for the frontend library
@@ -170,4 +169,4 @@ This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICE
 - All contributors and supporters
 
 ---
-Made with ❤️ by Bobin Singh
+Crafted with 🦝 by Bobin Singh

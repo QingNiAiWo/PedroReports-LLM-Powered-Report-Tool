@@ -135,7 +135,7 @@ const App = () => {
       <ThemeToggle theme={theme} onToggle={toggleTheme} />
       <div className="content-wrapper">
         <div className="header">
-          <h1 className="title">InsightFlow AI Analytics Tool</h1>
+          <h1 className="title">PedroReports - Your Pawsome Reporter</h1>
           <p className="subtitle">Upload your dataset and get comprehensive analysis reports</p>
         </div>
 

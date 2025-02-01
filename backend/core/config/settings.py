@@ -11,7 +11,7 @@ load_dotenv()
 
 class Settings(BaseSettings):
     # Application Settings
-    PROJECT_NAME: str = "InsightFlow AI Analytics Tool"
+    PROJECT_NAME: str = "PedroReports"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: str = "development"
