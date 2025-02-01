@@ -215,11 +215,11 @@ Format your response in the following JSON structure:
             # Read and validate stats
             stats_data = self._load_stats_data(stats_path)
             
-            # Create comprehensive prompt with full stats data
+            # Create comprehensive prompt
             prompt = f"""Statistical Data:
-{json.dumps(stats_data, indent=2)}
+    {json.dumps(stats_data, indent=2)}
 
-{self.analysis_template}"""
+    {self.analysis_template}"""
 
             # Generate analysis
             message = HumanMessage(content=[
@@ -247,8 +247,8 @@ Format your response in the following JSON structure:
                 "sections": json.loads(cleaned_json).get("sections", [])
             }
             
-            # Save analysis
-            json_path = path_config.DESCRIPTION_DIR / f"{graph_path.stem}_analysis.json"
+            # Save analysis - Remove _analysis suffix
+            json_path = path_config.DESCRIPTION_DIR / f"{graph_path.stem}.json"
             with open(json_path, "w", encoding='utf-8') as f:
                 json.dump(output_data, f, indent=2, ensure_ascii=False)
             

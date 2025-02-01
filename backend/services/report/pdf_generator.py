@@ -22,7 +22,6 @@ from .pdf_styles import get_custom_styles
 
 logger = get_logger(__name__)
 
-
 @dataclass
 class TOCEntry:
     """Table of Contents entry"""
@@ -84,13 +83,22 @@ class DynamicTOC:
 
 
 class PDFGenerator:
-    """PDF Report Generator"""
+    """PDF Report Generator with Reliable Image Handling"""
     
     def __init__(self):
         self.styles = get_custom_styles()
         self.toc = DynamicTOC()
         self.figures_list = []
         self.report_title = "Data Analysis Report"
+
+    def _validate_graph_path(self, graph_path: str) -> bool:
+        """Validate that a graph file exists and is readable"""
+        try:
+            path = Path(graph_path)
+            return path.exists() and path.is_file() and path.stat().st_size > 0
+        except Exception as e:
+            logger.error(f"Error validating graph path {graph_path}: {str(e)}")
+            return False    
     
     def create_header_footer(self, canvas, doc):
         """Create header and footer on each page"""
@@ -328,55 +336,64 @@ class PDFGenerator:
         return elements
 
     def create_analysis_chapters(self, analysis_data: List[Dict]) -> List:
-        """Create analysis chapters with visualizations"""
+        """Create analysis chapters with proper image handling"""
         elements = []
         
-        for i, data in enumerate(analysis_data, 1):  
-            content = data.get('content', {})
-            title = content.get('sections', [{}])[0].get('title', 
-                    content.get('question', f'Analysis {i}'))
-            
-            chapter_title = f"{i}. {self._format_title(title)}"
-            self.toc.add_entry(chapter_title, 1)
-            
-            # Add chapter title
-            elements.append(Paragraph(chapter_title, 
-                                    self.styles['CustomChapterTitle']))
-            
-            # Add visualization if available
-            graph_path = data.get('graph_path')
-            if graph_path and Path(graph_path).exists():
-                img = Image(graph_path, 
-                        width=PDF_CONSTANTS['MAX_IMAGE_WIDTH'],
-                        height=0.75*PDF_CONSTANTS['MAX_IMAGE_WIDTH'])
-                elements.append(img)
+        for i, data in enumerate(analysis_data, 1):
+            try:
+                content = data.get('content', {})
+                title = content.get('sections', [{}])[0].get('title', 
+                        content.get('question', f'Analysis {i}'))
                 
-                figure_title = f"Figure {i}: {self._format_title(title)}"  # Changed from i-1 to i
-                elements.append(Paragraph(figure_title, 
-                                        self.styles['CustomCaption']))
-                self.figures_list.append({
-                    'title': figure_title,
-                    'page': self.toc.current_page
-                })
-            
-            # Add sections with proper headings
-            if sections := content.get('sections', []):
-                for section in sections:
-                    # Add section heading
-                    if heading := section.get('heading'):
-                        elements.append(Paragraph(
-                            heading,
-                            self.styles['CustomSectionTitle']
-                        ))
-                        self.toc.add_entry(heading, 2)
-                    
-                    # Add section content
-                    elements.extend(self._format_analysis_section(section))
-            
-            elements.append(PageBreak())
-            self.toc.increment_page()
+                chapter_title = f"{i}. {self._format_title(title)}"
+                self.toc.add_entry(chapter_title, 1)
+                
+                # Add chapter title
+                elements.append(Paragraph(chapter_title, 
+                                        self.styles['CustomChapterTitle']))
+                
+                # Handle visualization with proper validation
+                graph_path = data.get('graph_path')
+                if graph_path and self._validate_graph_path(graph_path):
+                    try:
+                        img = Image(graph_path, 
+                                width=PDF_CONSTANTS['MAX_IMAGE_WIDTH'],
+                                height=0.75*PDF_CONSTANTS['MAX_IMAGE_WIDTH'])
+                        elements.append(img)
+                        
+                        figure_title = f"Figure {i}: {self._format_title(title)}"
+                        elements.append(Paragraph(figure_title, 
+                                            self.styles['CustomCaption']))
+                        self.figures_list.append({
+                            'title': figure_title,
+                            'page': self.toc.current_page
+                        })
+                    except Exception as e:
+                        logger.error(f"Failed to add image for chapter {i}: {str(e)}")
+                else:
+                    logger.warning(f"No valid graph found for chapter {i}")
+                
+                # Add sections with proper headings
+                if sections := content.get('sections', []):
+                    for section in sections:
+                        if heading := section.get('heading'):
+                            elements.append(Paragraph(
+                                heading,
+                                self.styles['CustomSectionTitle']
+                            ))
+                            self.toc.add_entry(heading, 2)
+                        
+                        elements.extend(self._format_analysis_section(section))
+                
+                elements.append(PageBreak())
+                self.toc.increment_page()
+                
+            except Exception as e:
+                logger.error(f"Error processing chapter {i}: {str(e)}")
+                continue
         
         return elements
+    
 
     def _format_title(self, text: str) -> str:
         """Format title text"""
@@ -386,31 +403,42 @@ class PDFGenerator:
                        for word in text.replace('_', ' ').split())
 
     def _load_analysis_data(self) -> List[Dict]:
-        """Load and sort analysis data from JSON files"""
+        """Load and validate analysis data from JSON files"""
         analysis_data = []
-        json_files = sorted(path_config.DESCRIPTION_DIR.glob('*_analysis.json'))
+        # Update to look for .json files without _analysis suffix
+        json_files = sorted(path_config.DESCRIPTION_DIR.glob('*.json'))
         
         for json_file in json_files:
             try:
                 with open(json_file, 'r') as file:
                     analysis = json.load(file)
                 
-                graph_path = path_config.GRAPHS_DIR / json_file.stem.replace(
-                    '_analysis', '.png'
-                )
+                # Construct graph path - no need to replace _analysis anymore
+                graph_path = path_config.GRAPHS_DIR / f"{json_file.stem}.png"
                 
+                if not self._validate_graph_path(str(graph_path)):
+                    logger.warning(f"Graph file missing or invalid for {json_file.name}")
+                    continue
+                    
                 analysis_data.append({
                     "content": analysis,
                     "graph_path": str(graph_path)
                 })
+                
             except Exception as e:
                 logger.error(f"Error loading analysis file {json_file}: {str(e)}")
-        
+                
+        # Sort analysis data by question number if available
+        try:
+            analysis_data.sort(key=lambda x: int(x["content"].get("question", "").split()[0]))
+        except:
+            logger.warning("Could not sort analysis data by question number")
+            
         return analysis_data
 
     @log_execution
     def generate_pdf(self, report_title: str = "Data Analysis Report") -> str:
-        """Generate the complete PDF report"""
+        """Generate the complete PDF report with reliable image handling"""
         try:
             self.report_title = report_title
             self.toc = DynamicTOC()
@@ -429,34 +457,30 @@ class PDFGenerator:
                 bottomMargin=PDF_CONSTANTS['MARGIN']
             )
             
-            # Load data and create all sections first to build TOC
+            # Load and validate data
             analysis_data = self._load_analysis_data()
+            if not analysis_data:
+                raise PDFGenerationError("No valid analysis data found")
             
-            # Create sections without TOC first to gather all entries
-            cover_page = self.create_cover_page()
-            exec_summary = self.create_executive_summary(analysis_data)
-            analysis_chapters = self.create_analysis_chapters(analysis_data)
-            conclusions = self.create_conclusions(analysis_data)
-            
-            # Now create TOC with all gathered entries
-            table_of_contents = self.create_table_of_contents()
-            
-            # Combine all content
+            # Create sections
             content = []
-            content.extend(cover_page)
-            content.extend(table_of_contents)
-            content.extend(exec_summary)
-            content.extend(analysis_chapters)
-            content.extend(conclusions)
+            content.extend(self.create_cover_page())
+            content.extend(self.create_table_of_contents())
+            content.extend(self.create_executive_summary(analysis_data))
+            content.extend(self.create_analysis_chapters(analysis_data))
+            content.extend(self.create_conclusions(analysis_data))
             
-            # Build PDF
-            doc.build(
-                content,
-                onFirstPage=self.create_header_footer,
-                onLaterPages=self.create_header_footer
-            )
+            # Build PDF with error handling
+            try:
+                doc.build(
+                    content,
+                    onFirstPage=self.create_header_footer,
+                    onLaterPages=self.create_header_footer
+                )
+            except Exception as e:
+                raise PDFGenerationError(f"PDF build failed: {str(e)}")
             
-            logger.info(f"Generated PDF: {output_path}")
+            logger.info(f"Generated PDF successfully: {output_path}")
             return str(output_path)
             
         except Exception as e:

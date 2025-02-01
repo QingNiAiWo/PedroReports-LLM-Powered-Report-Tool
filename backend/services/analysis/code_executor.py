@@ -26,6 +26,11 @@ class CodeExecutor:
                 if file.endswith('.png'):
                     (path_config.GRAPHS_DIR / file).unlink()
                     
+            # Clean up description directory - updated to match new convention
+            for file in os.listdir(path_config.DESCRIPTION_DIR):
+                if file.endswith('.json'):
+                    (path_config.DESCRIPTION_DIR / file).unlink()
+                    
             # Clean up stats directory
             for file in os.listdir(path_config.STATS_DIR):
                 if file.endswith('_stats.json'):
