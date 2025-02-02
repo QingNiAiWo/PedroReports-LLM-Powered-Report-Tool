@@ -1,0 +1,28 @@
+{
+    "question": "What is the distribution of Diabetes Pedigree Function across different outcome groups, and how does it relate to the number of pregnancies?",
+    "additional_metrics": {},
+    "outcome_0": {
+        "DiabetesPedigreeFunction": {
+            "mean": 0.4035,
+            "median": 0.33,
+            "mode": 0.0
+        },
+        "Pregnancies": {
+            "mean": 3.1991,
+            "median": 2.0,
+            "mode": 1.0
+        }
+    },
+    "outcome_1": {
+        "DiabetesPedigreeFunction": {
+            "mean": 0.4794,
+            "median": 0.408,
+            "mode": 0.0
+        },
+        "Pregnancies": {
+            "mean": 4.9754,
+            "median": 4.0,
+            "mode": 0.0
+        }
+    }
+}

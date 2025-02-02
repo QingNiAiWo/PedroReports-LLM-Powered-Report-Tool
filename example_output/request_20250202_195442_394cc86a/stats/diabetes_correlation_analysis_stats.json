@@ -1,0 +1,26 @@
+{
+    "question": "How does Blood Glucose Level and BMI correlate with Diabetes Outcome, and what patterns emerge across different age groups?",
+    "additional_metrics": {},
+    "columns": {
+        "Glucose": {
+            "mean": 119.5535,
+            "median": 114.5,
+            "mode": 100.0
+        },
+        "BMI": {
+            "mean": 32.076,
+            "median": 32.0,
+            "mode": 31.6
+        },
+        "Age": {
+            "mean": 32.9205,
+            "median": 29.0,
+            "mode": 22.0
+        },
+        "Outcome": {
+            "mean": 0.3196,
+            "median": 0.0,
+            "mode": 0.0
+        }
+    }
+}

@@ -4,4 +4,11 @@ Question 3: How does DiabetesPedigreeFunction (genetic influence) vary across ag
 Question 4: What is the correlation between Blood Pressure and BMI, and how do these factors influence diabetes risk?
 Question 5: Compare the distribution of pregnancies across different age groups and analyze its relationship with diabetes outcomes.
 
-explain distribution of age
+1. How does Blood Glucose Level and BMI correlate with Diabetes Outcome, and what patterns emerge across different age groups?
+
+2. What is the distribution of Diabetes Pedigree Function across different outcome groups, and how does it relate to the number of pregnancies?
+
+
+3. How do Blood Pressure and Insulin levels vary between diabetic and non-diabetic patients, and is there a clear pattern related to BMI?
+
+4. What is the age distribution of diabetic vs non-diabetic patients, and how does it correlate with skin thickness and glucose levels?
