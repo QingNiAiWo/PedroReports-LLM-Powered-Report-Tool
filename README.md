@@ -8,7 +8,7 @@
 
 ## What is PedroReports?
 
-### Watch the Video Tutorial by clicking on Thumbnail below !!
+Watch the Video Tutorial by clicking on Thumbnail below !!
 
 [![Watch tutorial](https://img.youtube.com/vi/DFu0m22gfe8/maxresdefault.jpg)](https://www.youtube.com/watch?v=DFu0m22gfe8)
 
