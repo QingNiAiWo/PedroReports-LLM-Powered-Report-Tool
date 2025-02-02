@@ -36,8 +36,8 @@ PedroReports excels across various domains:
 ## Features
 
 - 📊 Automated data analysis and visualization
-- 📝 AI-powered insights generation using Google's Gemini model
-- 📈 Interactive data visualizations with Recharts
+- 📝 AI-powered insights generation using Google's Gemini-1.5-flash model
+- 📈 Interactive data visualizations with Matplotlib & Seaborn
 - 📱 Responsive and modern UI with Tailwind CSS
 - 🎨 Light/Dark mode support
 - 🔒 Secure file handling and validation
@@ -49,8 +49,7 @@ PedroReports excels across various domains:
 ### Frontend
 - ⚛️ React with Vite for blazing-fast development
 - 🎨 Tailwind CSS for styling
-- 📊 Recharts for data visualization
-- 🌓 Custom theming system
+- 🌓 Dark/Light mode support
 - 🔧 Modern React Hooks and best practices
 
 ### Backend
@@ -82,6 +81,10 @@ cd pedroreports
 # Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# For Linux
+conda create -n pedrotool python=3.11
+conda activate pedrotool
 
 # Install dependencies
 pip install -r requirements.txt
