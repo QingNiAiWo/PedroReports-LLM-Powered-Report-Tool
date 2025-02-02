@@ -8,6 +8,8 @@
 
 ## What is PedroReports?
 
+### Watch the Video Tutorial by clicking on Thumbnail below !!
+
 [![Watch tutorial](https://img.youtube.com/vi/DFu0m22gfe8/maxresdefault.jpg)](https://www.youtube.com/watch?v=DFu0m22gfe8)
 
 PedroReports is your clever companion for data analysis, transforming raw datasets into polished insights through the power of Google's Gemini AI. With a curious eye and quick thinking, it turns your CSV datasets into comprehensive, professional PDF reports with minimal effort. Whether you're analyzing financial trends, healthcare metrics, marketing data, or any other tabular dataset, PedroReports is ready to dig through your data and uncover hidden treasures.
