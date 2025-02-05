@@ -102,12 +102,20 @@ npm install
 
 Backend:
 ```bash
+
+# Navigate to backend directory
+cd backend
+
 # From root directory
 uvicorn main:app --reload --port 8000
 ```
 
 Frontend:
 ```bash
+
+# Navigate to frontend directory
+cd frontend
+
 # From frontend directory
 npm run dev
 ```
