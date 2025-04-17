@@ -1,6 +1,6 @@
 def add_type_conversion_handling(code: str) -> str:
     """Add type conversion handling to generated code before execution."""
-    # Define the type conversion utility code
+    # 定义类型转换工具代码，确保Numpy和Pandas类型能被JSON序列化
     type_conversion_code = '''
 import json
 import numpy as np
@@ -23,7 +23,7 @@ class NumpyJSONEncoder(json.JSONEncoder):
 
 '''
     
-    # Remove existing imports that we're adding
+    # 移除原代码中已存在的相关import，避免重复
     code_lines = code.split('\n')
     filtered_lines = []
     skip_imports = {'import json', 'import numpy as np', 'import pandas as pd'}
@@ -34,10 +34,10 @@ class NumpyJSONEncoder(json.JSONEncoder):
     
     code = '\n'.join(filtered_lines)
     
-    # Add our type conversion code at the start
+    # 在代码开头插入类型转换工具代码
     code = type_conversion_code + code
     
-    # Replace json.dump calls to use our encoder
+    # 替换json.dump调用，强制使用自定义encoder
     import re
     json_dump_pattern = r'json\.dump\((.*?),\s*(.*?)(?:,\s*(?:default=[\w\._]+,\s*)?indent\s*=\s*(\d+))?\)'
     
@@ -52,18 +52,20 @@ class NumpyJSONEncoder(json.JSONEncoder):
 
 def process_generated_code(code_path: str) -> str:
     """Process the generated code file to add type conversion handling"""
+    # 处理生成的代码文件，插入类型转换支持
     try:
-        # Read the original code
+        # 读取原始代码
         with open(code_path, 'r') as f:
             original_code = f.read()
         
-        # Add type conversion handling
+        # 添加类型转换处理
         modified_code = add_type_conversion_handling(original_code)
         
-        # Write back the modified code
+        # 写回修改后的代码
         with open(code_path, 'w') as f:
             f.write(modified_code)
             
         return code_path
     except Exception as e:
+        # 捕获异常并抛出运行时错误
         raise RuntimeError(f"Failed to process generated code: {str(e)}")
